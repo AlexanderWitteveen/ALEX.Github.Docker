@@ -1,1 +1,3 @@
-# ALEX.Github.Docker
+# Introduction
+
+This action builds a docker file and saves it.

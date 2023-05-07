@@ -1,0 +1,29 @@
+# action.yml
+name: 'Build Installer'
+description: 'Build an installer'
+inputs:
+  name:
+    description: 'Name of the image'
+    required: true
+    default: 'name'
+  tag:
+    description: 'tag for the image'
+    required: true
+    default: 'latest'
+outputs:
+  filename:
+    description: 'The name of the docker file'
+runs:
+  using: 'composite'
+  steps:
+    - name: Build Docker image
+      shell: bash
+      run: |
+        # Activate experimental features for squash
+        echo $'{\n  "experimental": true\n}' | sudo tee /etc/docker/daemon.json
+        mkdir -p ~/.docker
+        echo $'{\n  "experimental": "enabled"\n}' | sudo tee ~/.docker/config.json
+        sudo service docker restart
+
+        docker build --tag "${{ inputs.name }}:${{ inputs.tag }}" --squash test 
+        docker save -o "${{ inputs.name }}.tar" "${{ inputs.name }}:${{ inputs.tag }}"
