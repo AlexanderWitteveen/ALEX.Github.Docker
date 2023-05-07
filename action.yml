@@ -10,6 +10,9 @@ inputs:
     description: 'tag for the image'
     required: true
     default: 'latest'
+  path:
+    description: 'path for dockerfile folder'
+    required: true
 outputs:
   filename:
     description: 'The name of the docker file'
@@ -25,5 +28,7 @@ runs:
         echo $'{\n  "experimental": "enabled"\n}' | sudo tee ~/.docker/config.json
         sudo service docker restart
 
-        docker build --tag "${{ inputs.name }}:${{ inputs.tag }}" --squash test 
+        docker build --tag "${{ inputs.name }}:${{ inputs.tag }}" --squash "${{ inputs.path }}"
         docker save -o "${{ inputs.name }}.tar" "${{ inputs.name }}:${{ inputs.tag }}"
+
+        echo "filename=$(echo '${{ inputs.name }}.tar')" >> $GITHUB_OUTPUT
