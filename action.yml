@@ -33,4 +33,4 @@ runs:
         docker build --tag "${{ inputs.name }}:${{ inputs.tag }}" --squash "${{ inputs.path }}"
         docker save -o "${{ inputs.name }}.tar" "${{ inputs.name }}:${{ inputs.tag }}"
 
-        echo "filename='${{ inputs.name }}.tar'" >> $GITHUB_OUTPUT
+        echo "filename=${{ inputs.name }}.tar" >> $GITHUB_OUTPUT
