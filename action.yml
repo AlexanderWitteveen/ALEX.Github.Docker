@@ -1,6 +1,6 @@
 # action.yml
-name: 'Build Installer'
-description: 'Build an installer'
+name: 'Build Docker Image'
+description: 'Build an Docker Image'
 inputs:
   name:
     description: 'Name of the image'
@@ -24,13 +24,19 @@ runs:
       id: builddockerimage
       shell: bash
       run: |
-        # Activate experimental features for squash
-        echo $'{\n  "experimental": true\n}' | sudo tee /etc/docker/daemon.json
-        mkdir -p ~/.docker
-        echo $'{\n  "experimental": "enabled"\n}' | sudo tee ~/.docker/config.json
-        sudo service docker restart
+        # # Activate experimental features for squash
+        # echo $'{\n  "experimental": true\n}' | sudo tee /etc/docker/daemon.json
+        # mkdir -p ~/.docker
+        # echo $'{\n  "experimental": "enabled"\n}' | sudo tee ~/.docker/config.json
+        # sudo service docker restart
 
-        docker build --tag "${{ inputs.name }}:${{ inputs.tag }}" --squash "${{ inputs.path }}"
+        # docker build --tag "${{ inputs.name }}:${{ inputs.tag }}" --squash "${{ inputs.path }}"
+        docker build --tag "${{ inputs.name }}:${{ inputs.tag }}" "${{ inputs.path }}"
         docker save -o "${{ inputs.name }}.tar" "${{ inputs.name }}:${{ inputs.tag }}"
 
+    - name: Output
+      id: output
+      shell: bash
+      run: |
+        docker history "${{ inputs.name }}:${{ inputs.tag }}"
         echo "filename=${{ inputs.name }}.tar" >> $GITHUB_OUTPUT
